@@ -7,7 +7,7 @@ import { signOut } from "firebase/auth";
 import { collection, doc, getDocs, onSnapshot } from "firebase/firestore";
 import { toast } from "sonner";
 import { auth, db } from "@/lib/firebase";
-import { useRequireAuth } from "@/hooks/useRequiredAuth";
+import { useRequireAuth } from "@/hooks/useRequireAuth";
 import type { UserProfile } from "@/types/user";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
