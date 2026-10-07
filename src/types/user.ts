@@ -2,5 +2,7 @@ export interface UserProfile {
   uid: string;
   fullName: string;
   email: string;
-  createdAt: string;
+  bio: string;
+  photoURL: string | null;
+  createdAt: string; 
 }

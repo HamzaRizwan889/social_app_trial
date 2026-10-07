@@ -2,23 +2,14 @@ import { z } from "zod";
 
 export const signUpSchema = z
   .object({
-    fullName: z
-      .string()
-      .min(1, { message: "Full name is required" }),
-    email: z
-      .string()
-      .min(1, { message: "Email is required" })
-      .email({ message: "Invalid email address" }),
-    password: z
-      .string()
-      .min(8, { message: "Password must be at least 8 characters" }),
-    confirmPassword: z
-      .string()
-      .min(1, { message: "Please confirm your password" }),
+    fullName: z.string().trim().min(1, "Full name is required"),
+    email: z.string().min(1, "Email is required").email("Enter a valid email"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    confirmPassword: z.string().min(1, "Please confirm your password"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
-    path: ["confirmPassword"], 
+    path: ["confirmPassword"],
   });
 
-export type SignUpFormValues = z.infer<typeof signUpSchema>;
+export type SignUpValues = z.infer<typeof signUpSchema>;
