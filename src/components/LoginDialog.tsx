@@ -1,22 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  sendPasswordResetEmail,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { z } from "zod";
-import { toast } from "sonner";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 import { auth } from "@/lib/firebase";
 import { getAuthErrorMessage } from "@/lib/authErrors";
 import { loginSchema, type LoginValues } from "@/schemas/loginSchema";
-
+import GoogleButton from "@/components/GoogleButton";
 import { Button } from "@/components/ui/button";
-
 import {
   Dialog,
   DialogContent,
@@ -25,36 +20,22 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
-
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
 export default function LoginDialog() {
   const [open, setOpen] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [resetting, setResetting] = useState(false);
-
   const router = useRouter();
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+    defaultValues: { email: "", password: "" },
   });
-
-  const isSubmitting = form.formState.isSubmitting;
+  const { errors, isSubmitting } = form.formState;
 
   const handleOpenChange = (next: boolean) => {
     setOpen(next);
-
     if (next) {
       form.reset();
       setSubmitError(null);
@@ -63,10 +44,8 @@ export default function LoginDialog() {
 
   const onSubmit = async (values: LoginValues) => {
     setSubmitError(null);
-
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
-
       setOpen(false);
       router.push("/dashboard");
     } catch (error: unknown) {
@@ -74,110 +53,50 @@ export default function LoginDialog() {
     }
   };
 
-  const handleForgotPassword = async () => {
-    setSubmitError(null);
-
-    const parsed = z
-      .string()
-      .email()
-      .safeParse(form.getValues("email"));
-
-    if (!parsed.success) {
-      form.setError("email", {
-        message: "Enter your email above first",
-      });
-      return;
-    }
-
-    setResetting(true);
-
-    try {
-      await sendPasswordResetEmail(auth, parsed.data);
-
-      toast.success("Password reset email sent. Check your inbox.");
-    } catch (error: unknown) {
-      setSubmitError(getAuthErrorMessage(error));
-    } finally {
-      setResetting(false);
-    }
-  };
-
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger render={<Button variant="outline" />}>
-        Log In
-      </DialogTrigger>
+      <DialogTrigger render={<Button variant="outline" />}>Log In</DialogTrigger>
 
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Welcome back</DialogTitle>
-          <DialogDescription>
-            Log in with your email and password.
-          </DialogDescription>
+          <DialogDescription>Log in with your email and password.</DialogDescription>
         </DialogHeader>
 
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-4"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FieldGroup>
             <Field>
-              <FieldLabel htmlFor="login-email">
-                Email
-              </FieldLabel>
-
-              <Input
-                id="login-email"
-                type="email"
-                {...form.register("email")}
-              />
-
-              <FieldError>
-                {form.formState.errors.email?.message}
-              </FieldError>
+              <FieldLabel htmlFor="login-email">Email</FieldLabel>
+              <Input id="login-email" type="email" {...form.register("email")} />
+              <FieldError>{errors.email?.message}</FieldError>
             </Field>
-
             <Field>
-              <FieldLabel htmlFor="login-password">
-                Password
-              </FieldLabel>
-
-              <Input
-                id="login-password"
-                type="password"
-                {...form.register("password")}
-              />
-
-              <FieldError>
-                {form.formState.errors.password?.message}
-              </FieldError>
+              <FieldLabel htmlFor="login-password">Password</FieldLabel>
+              <Input id="login-password" type="password" {...form.register("password")} />
+              <FieldError>{errors.password?.message}</FieldError>
             </Field>
           </FieldGroup>
 
-          {submitError && (
-            <p className="text-sm text-destructive">
-              {submitError}
-            </p>
-          )}
+          {submitError && <p className="text-sm text-destructive">{submitError}</p>}
 
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={isSubmitting}
-          >
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? "Logging in…" : "Log In"}
           </Button>
 
-          <Button
-            type="button"
-            variant="link"
-            className="w-full"
-            onClick={handleForgotPassword}
-            disabled={resetting}
+          <Link
+            href="/forgot-password"
+            className="block text-center text-sm text-primary underline-offset-4 hover:underline"
           >
-            {resetting ? "Sending…" : "Forgot password?"}
-          </Button>
+            Forgot password?
+          </Link>
         </form>
+
+        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+          <span className="h-px flex-1 bg-border" />
+          or
+          <span className="h-px flex-1 bg-border" />
+        </div>
+        <GoogleButton />
       </DialogContent>
     </Dialog>
   );
