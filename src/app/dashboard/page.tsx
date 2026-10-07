@@ -54,14 +54,17 @@ export default function DashboardPage() {
       .finally(() => setUsersLoading(false));
   }, [user]);
 
-  const handleLogout = async () => {
+    const handleLogout = async () => {
     await signOut(auth);
-    router.push("/");
-  };
+    
 
-  if (loading || !user) {
-    return <main className="flex min-h-screen items-center justify-center">Loading…</main>;
-  }
+    // return (
+    //     <main className="flex min-h-screen flex-col items-center justify-center gap-3">
+    //     <p>Loading…</p>
+    //     <a href="/" className="text-sm underline">Back to home</a>
+    //     </main>
+    // );
+    };
 
   return (
     <main className="mx-auto max-w-3xl space-y-6 p-6">

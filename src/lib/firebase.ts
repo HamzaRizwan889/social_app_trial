@@ -1,5 +1,12 @@
 import { getApp, getApps, initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import {
+  browserLocalPersistence,
+  browserSessionPersistence,
+  getAuth,
+  initializeAuth,
+  inMemoryPersistence,
+  type Auth,
+} from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -11,7 +18,15 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+const alreadyInitialized = getApps().length > 0;
+const app = alreadyInitialized ? getApp() : initializeApp(firebaseConfig);
 
-export const auth = getAuth(app);
+function createAuth(): Auth {
+  if (alreadyInitialized || typeof window === "undefined") return getAuth(app);
+  return initializeAuth(app, {
+    persistence: [browserLocalPersistence, browserSessionPersistence, inMemoryPersistence],
+  });
+}
+
+export const auth = createAuth();
 export const db = getFirestore(app);

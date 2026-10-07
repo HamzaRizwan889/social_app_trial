@@ -15,13 +15,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+useEffect(() => {
+  console.log("AuthProvider mounted");
+  const unsubscribe = onAuthStateChanged(
+    auth,
+    (firebaseUser) => {
+      console.log("auth state:", firebaseUser?.uid ?? null);
       setUser(firebaseUser);
       setLoading(false);
-    });
-    return unsubscribe;
-  }, []);
+    },
+    (error) => {
+      console.error("auth error:", error);
+      setLoading(false);
+    },
+  );
+  return unsubscribe;
+}, []);
 
   return <AuthContext.Provider value={{ user, loading }}>{children}</AuthContext.Provider>;
 }
