@@ -17,6 +17,10 @@ export function getAuthErrorMessage(error: unknown): string {
         return "Too many attempts. Try again later";
       case "auth/network-request-failed":
         return "Network error. Check your connection";
+      case "auth/popup-blocked":
+        return "Popup was blocked. Allow popups and try again";
+      case "auth/account-exists-with-different-credential":
+        return "An account already exists with this email using another sign-in method";
     }
   }
   return "Something went wrong. Please try again";
