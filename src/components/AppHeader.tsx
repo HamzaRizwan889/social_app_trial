@@ -17,7 +17,7 @@ export default function AppHeader() {
           <span className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-primary-foreground">
             H
           </span>
-          HealthShared
+          NexusMedia
         </Link>
         <Button variant="outline" size="sm" onClick={handleLogout}>
           Log out
