@@ -1,0 +1,28 @@
+"use client";
+
+import Link from "next/link";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { Button } from "@/components/ui/button";
+
+export default function AppHeader() {
+  const handleLogout = async () => {
+    await signOut(auth); // the route guard redirects to "/"
+  };
+
+  return (
+    <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur">
+      <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
+        <Link href="/dashboard" className="flex items-center gap-2 font-semibold">
+          <span className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-primary-foreground">
+            H
+          </span>
+          HealthShared
+        </Link>
+        <Button variant="outline" size="sm" onClick={handleLogout}>
+          Log out
+        </Button>
+      </div>
+    </header>
+  );
+}
