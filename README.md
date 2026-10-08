@@ -1,4 +1,4 @@
-# HealthShared
+# NexusMedia
 
 A small social-style app built with Next.js and Firebase. Users can sign up, log in, manage their profile and picture, browse other users, and leave comments on profiles.
 
