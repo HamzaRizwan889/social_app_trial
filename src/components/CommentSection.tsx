@@ -26,7 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 interface CommentSectionProps {
   profileUid: string;
-  author: UserProfile; // the logged-in user's profile
+  author: UserProfile; 
   isProfileOwner: boolean;
 }
 

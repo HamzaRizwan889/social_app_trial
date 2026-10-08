@@ -23,5 +23,6 @@ export function getAuthErrorMessage(error: unknown): string {
         return "An account already exists with this email using another sign-in method";
     }
   }
-  return "Something went wrong. Please try again";
+    if (error instanceof FirebaseError) return `Something went wrong (${error.code})`;
+  return "Something went wrong. Please try again";  
 }

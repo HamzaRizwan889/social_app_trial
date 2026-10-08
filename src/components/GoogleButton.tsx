@@ -3,7 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FirebaseError } from "firebase/app";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import {
+  browserPopupRedirectResolver,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { toast } from "sonner";
 
@@ -19,7 +23,11 @@ export default function GoogleButton() {
   const handleClick = async () => {
     setBusy(true);
     try {
-      const { user } = await signInWithPopup(auth, new GoogleAuthProvider());
+      const { user } = await signInWithPopup(
+        auth,
+        new GoogleAuthProvider(),
+        browserPopupRedirectResolver,
+      );
       const ref = doc(db, "users", user.uid);
 
       const existing = await getDoc(ref);
@@ -35,9 +43,11 @@ export default function GoogleButton() {
         await setDoc(ref, profile);
       }
       router.push("/dashboard");
-    } catch (error: unknown) {
-      const closed = error instanceof FirebaseError && error.code === "auth/popup-closed-by-user";
-      if (!closed) toast.error(getAuthErrorMessage(error));
+   } catch (error: unknown) {
+    console.error("Google sign-in error:", error);
+    const closed = error instanceof FirebaseError && error.code === "auth/popup-closed-by-user";
+    if (!closed) toast.error(getAuthErrorMessage(error));
+
     } finally {
       setBusy(false);
     }

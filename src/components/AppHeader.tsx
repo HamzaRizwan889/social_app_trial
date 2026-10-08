@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 
 export default function AppHeader() {
   const handleLogout = async () => {
-    await signOut(auth); // the route guard redirects to "/"
+    await signOut(auth); 
   };
 
   return (
@@ -15,7 +15,7 @@ export default function AppHeader() {
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
         <Link href="/dashboard" className="flex items-center gap-2 font-semibold">
           <span className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-primary-foreground">
-            H
+            N
           </span>
           NexusMedia
         </Link>
