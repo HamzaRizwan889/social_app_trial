@@ -44,12 +44,12 @@ export async function deleteComment(profileUid: string, commentId: string): Prom
 
   const profileId = idSchema.safeParse(profileUid);
   const cid = idSchema.safeParse(commentId);
-  if (!profileId.success || !cid) return { ok: false, error: "Invalid request" };
+  if (!profileId.success || !cid.success) return { ok: false, error: "Invalid request" };
 
   try {
     const ref = getAdminDb()
       .collection("users").doc(profileId.data)
-      .collection("comments").doc(cid);
+      .collection("comments").doc(cid.data);
     const snapshot = await ref.get();
     if (!snapshot.exists) return { ok: false, error: "Comment not found" };
 

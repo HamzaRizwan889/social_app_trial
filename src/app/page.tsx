@@ -1,18 +1,10 @@
-"use client";
-
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
 import SignUpDialog from "@/components/SignUpDialog";
 import LoginDialog from "@/components/LoginDialog";
+import { redirect } from "next/navigation";
+import { getSessionUser } from "@/lib/session";
 
-export default function Home() {
-  const { user, loading } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!loading && user) router.replace("/dashboard");
-  }, [loading, user, router]);
+export default async function Home() {
+if (await getSessionUser()) redirect("/dashboard");
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-6 text-center">

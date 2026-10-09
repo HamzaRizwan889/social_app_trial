@@ -7,7 +7,6 @@ import {
   inMemoryPersistence,
   type Auth,
 } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -29,4 +28,3 @@ function createAuth(): Auth {
 }
 
 export const auth = createAuth();
-export const db = getFirestore(app);

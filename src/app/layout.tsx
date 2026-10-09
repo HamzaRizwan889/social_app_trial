@@ -16,9 +16,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <AuthProvider>
           {children}
-        </AuthProvider>
         <Toaster />
       </body>
     </html>

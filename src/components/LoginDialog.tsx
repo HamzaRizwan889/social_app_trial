@@ -47,9 +47,15 @@ export default function LoginDialog() {
   const onSubmit = async (values: LoginValues) => {
     setSubmitError(null);
     try {
-      await signInWithEmailAndPassword(auth, values.email, values.password);
-      const idToken = await credential.user.getIdToken(); 
+      const credential = await signInWithEmailAndPassword(auth, values.email, values.password);
+      const idToken = await credential.user.getIdToken();
+
       const result = await startSession({ idToken });
+      if (!result.ok) {
+        setSubmitError(result.error);
+        return;
+      }
+
       setOpen(false);
       router.push("/dashboard");
     } catch (error: unknown) {

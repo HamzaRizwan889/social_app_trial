@@ -8,12 +8,11 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
 import { toast } from "sonner";
 
-import { auth, db } from "@/lib/firebase";
+import { startSession } from "@/app/actions/auth";
+import { auth } from "@/lib/firebase";
 import { getAuthErrorMessage } from "@/lib/authErrors";
-import type { UserProfile } from "@/types/user";
 import { Button } from "@/components/ui/button";
 
 export default function GoogleButton() {
@@ -24,31 +23,21 @@ export default function GoogleButton() {
     setBusy(true);
     try {
       const { user } = await signInWithPopup(
-        startSession({ idToken: await user.getIdToken() }),
         auth,
         new GoogleAuthProvider(),
         browserPopupRedirectResolver,
       );
-      const ref = doc(db, "users", user.uid);
 
-      const existing = await getDoc(ref);
-      if (!existing.exists()) {
-        const profile: UserProfile = {
-          uid: user.uid,
-          fullName: user.displayName ?? "New user",
-          email: user.email ?? "",
-          bio: "",
-          photoURL: user.photoURL,
-          createdAt: new Date().toISOString(),
-        };
-        await setDoc(ref, profile);
+      const result = await startSession({ idToken: await user.getIdToken() });
+      if (!result.ok) {
+        toast.error(result.error);
+        return;
       }
-      router.push("/dashboard");
-   } catch (error: unknown) {
-    console.error("Google sign-in error:", error);
-    const closed = error instanceof FirebaseError && error.code === "auth/popup-closed-by-user";
-    if (!closed) toast.error(getAuthErrorMessage(error));
 
+      router.push("/dashboard");
+    } catch (error: unknown) {
+      const closed = error instanceof FirebaseError && error.code === "auth/popup-closed-by-user";
+      if (!closed) toast.error(getAuthErrorMessage(error));
     } finally {
       setBusy(false);
     }
