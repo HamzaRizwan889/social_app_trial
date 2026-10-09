@@ -35,8 +35,7 @@ export default function SignUpDialog() {
     defaultValues: { fullName: "", email: "", password: "", confirmPassword: "" },
   });
 
-  const { errors, isSubmitting, isSubmitted, touchedFields } = form.formState;
-  const showConfirmError = isSubmitted || touchedFields.confirmPassword;
+  const { errors, isSubmitting } = form.formState;
 
 
   const handleOpenChange = (next: boolean) => {
