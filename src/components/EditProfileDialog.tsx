@@ -3,10 +3,8 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { doc, updateDoc } from "firebase/firestore";
 import { toast } from "sonner";
-
-import { db } from "@/lib/firebase";
+import { updateProfile } from "@/app/actions/profile";
 import { uploadImage } from "@/lib/cloudinary";
 import { imageFileSchema, profileSchema, type ProfileValues } from "@/schemas/profileSchema";
 import type { UserProfile } from "@/types/user";
@@ -78,11 +76,11 @@ export default function EditProfileDialog({ profile }: EditProfileDialogProps) {
     setSubmitError(null);
     try {
       const photoURL = file ? await uploadImage(file) : profile.photoURL;
-      await updateDoc(doc(db, "users", profile.uid), {
-        fullName: values.fullName,
-        bio: values.bio,
-        photoURL,
-      });
+      const result = await updateProfile({ fullName: values.fullName, bio: values.bio, photoURL });
+      if (!result.ok) {
+        setSubmitError(result.error);
+        return;
+      }
       toast.success("Profile updated");
       setOpen(false);
     } catch (error: unknown) {

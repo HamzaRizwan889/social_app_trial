@@ -9,9 +9,19 @@ export const profileSchema = z.object({
   bio: z.string().trim().max(300, "Bio must be 300 characters or less"),
 });
 
+export const updateProfileSchema = profileSchema.extend({
+  photoURL: z
+    .string()
+    .url()
+    .refine((url) => url.startsWith("https://res.cloudinary.com/"), "Invalid image URL")
+    .nullable(),
+});
+
 export type ProfileValues = z.infer<typeof profileSchema>;
 
 const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
+
+export type UpdateProfileValues = z.infer<typeof updateProfileSchema>;
 
 export const imageFileSchema = z
   .instanceof(File)
