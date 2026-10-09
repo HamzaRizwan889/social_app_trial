@@ -9,6 +9,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 
 import { auth } from "@/lib/firebase";
 import { getAuthErrorMessage } from "@/lib/authErrors";
+import { startSession } from "@/app/actions/auth";
 import { loginSchema, type LoginValues } from "@/schemas/loginSchema";
 import GoogleButton from "@/components/GoogleButton";
 import PasswordInput from "./PasswordInput";
@@ -47,6 +48,8 @@ export default function LoginDialog() {
     setSubmitError(null);
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
+      const idToken = await credential.user.getIdToken(); 
+      const result = await startSession({ idToken });
       setOpen(false);
       router.push("/dashboard");
     } catch (error: unknown) {

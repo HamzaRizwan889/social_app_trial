@@ -24,6 +24,7 @@ export default function GoogleButton() {
     setBusy(true);
     try {
       const { user } = await signInWithPopup(
+        startSession({ idToken: await user.getIdToken() }),
         auth,
         new GoogleAuthProvider(),
         browserPopupRedirectResolver,

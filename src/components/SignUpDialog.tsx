@@ -5,13 +5,12 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
 import { toast } from "sonner";
 
-import { auth, db } from "@/lib/firebase";
+import { auth} from "@/lib/firebase";
 import { getAuthErrorMessage } from "@/lib/authErrors";
+import { startSession } from "@/app/actions/auth";
 import { signUpSchema, type SignUpValues } from "@/schemas/signUpSchema";
-import type { UserProfile } from "@/types/user";
 
 import GoogleButton from "@/components/GoogleButton";
 import PasswordInput from "./PasswordInput";
@@ -51,18 +50,13 @@ export default function SignUpDialog() {
     setSubmitError(null);
     try {
       const credential = await createUserWithEmailAndPassword(auth, values.email, values.password);
+      const idToken = await credential.user.getIdToken();
+      const result = await startSession({ idToken, fullName: values.fullName });
 
-      const profile: UserProfile = {
-        uid: credential.user.uid,
-        fullName: values.fullName,
-        email: values.email,
-        bio: "",
-        photoURL: null,
-        createdAt: new Date().toISOString(),
-      };
-
-      await setDoc(doc(db, "users", credential.user.uid), profile);
-
+      if (!result.ok) {
+        setSubmitError(result.error);
+        return;
+      }
       setOpen(false);
       toast.success("Account created successfully");
       router.push("/dashboard");
