@@ -14,6 +14,7 @@ import { signUpSchema, type SignUpValues } from "@/schemas/signUpSchema";
 import type { UserProfile } from "@/types/user";
 
 import GoogleButton from "@/components/GoogleButton";
+import PasswordInput from "./PasswordInput";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -80,7 +81,7 @@ export default function SignUpDialog() {
           <DialogDescription>Fill in your details to get started.</DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form noValidate onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="signup-name">Full name</FieldLabel>
@@ -96,13 +97,13 @@ export default function SignUpDialog() {
 
             <Field>
               <FieldLabel htmlFor="signup-password">Password</FieldLabel>
-              <Input id="signup-password" type="password" {...form.register("password")} />
+              <PasswordInput autoComplete="new-password" id="signup-password" {...form.register("password")} />
               <FieldError>{errors.password?.message}</FieldError>
             </Field>
 
             <Field>
               <FieldLabel htmlFor="signup-confirm">Confirm password</FieldLabel>
-              <Input id="signup-confirm" type="password" {...form.register("confirmPassword")} />
+              <PasswordInput autoComplete="new-password"  id="signup-confirm" {...form.register("confirmPassword")} />
               <FieldError>{errors.confirmPassword?.message}</FieldError>
             </Field>
           </FieldGroup>

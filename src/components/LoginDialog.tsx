@@ -11,6 +11,7 @@ import { auth } from "@/lib/firebase";
 import { getAuthErrorMessage } from "@/lib/authErrors";
 import { loginSchema, type LoginValues } from "@/schemas/loginSchema";
 import GoogleButton from "@/components/GoogleButton";
+import PasswordInput from "./PasswordInput";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -63,7 +64,7 @@ export default function LoginDialog() {
           <DialogDescription>Log in with your email and password.</DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form noValidate onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="login-email">Email</FieldLabel>
@@ -72,7 +73,7 @@ export default function LoginDialog() {
             </Field>
             <Field>
               <FieldLabel htmlFor="login-password">Password</FieldLabel>
-              <Input id="login-password" type="password" {...form.register("password")} />
+              <PasswordInput autoComplete="current-password"  id="login-password" {...form.register("password")} />
               <FieldError>{errors.password?.message}</FieldError>
             </Field>
           </FieldGroup>
