@@ -1,13 +1,30 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
+import { toast } from "sonner";
+
+import { endSession } from "@/app/actions/auth";
 import { auth } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 
 export default function AppHeader() {
+  const router = useRouter();
+  const [busy, setBusy] = useState(false);
+
   const handleLogout = async () => {
-    await signOut(auth); 
+    setBusy(true);
+    try {
+      await endSession();
+      await signOut(auth); 
+      router.replace("/");
+      router.refresh();
+    } catch {
+      toast.error("Could not log out. Please try again");
+      setBusy(false);
+    }
   };
 
   return (
@@ -19,8 +36,8 @@ export default function AppHeader() {
           </span>
           NexusMedia
         </Link>
-        <Button variant="outline" size="sm" onClick={handleLogout}>
-          Log out
+        <Button variant="outline" size="sm" onClick={handleLogout} disabled={busy}>
+          {busy ? "Logging out…" : "Log out"}
         </Button>
       </div>
     </header>

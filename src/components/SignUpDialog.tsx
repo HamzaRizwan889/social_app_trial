@@ -30,13 +30,14 @@ export default function SignUpDialog() {
   const [open, setOpen] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const router = useRouter();
-
   const form = useForm<SignUpValues>({
     resolver: zodResolver(signUpSchema),
     defaultValues: { fullName: "", email: "", password: "", confirmPassword: "" },
   });
 
-  const { errors, isSubmitting } = form.formState;
+  const { errors, isSubmitting, isSubmitted, touchedFields } = form.formState;
+  const showConfirmError = isSubmitted || touchedFields.confirmPassword;
+
 
   const handleOpenChange = (next: boolean) => {
     setOpen(next);
